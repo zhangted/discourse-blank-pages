@@ -1,0 +1,10 @@
+plugin:
+  external_js_link:
+    default: 'https://unpkg.com/react@18/umd/react.production.min.js'
+    client: true
+    description: 'Load a js script on valid routes'
+  valid_routes:
+    default: example|nested/route
+    type: list
+    client: true
+    description: 'Define your JSON array of valid routes (prefixed with "/page")'
