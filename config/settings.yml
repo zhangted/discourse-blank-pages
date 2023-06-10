@@ -6,5 +6,4 @@ plugin:
   valid_routes:
     default: example|nested/route
     type: list
-    client: true
-    description: 'Define your JSON array of valid routes (prefixed with "/page")'
+    description: 'Define your valid routes (prefixed with "/page")'
