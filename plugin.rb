@@ -2,12 +2,14 @@
 
 # name: discourse-blank-pages
 # about: Add blank pages and scripts on custom routes
-# version: 0.0.1 
+# version: 0.0.2
 # authors: Teddy Zhang
 # url: TODO
 # required_version: 2.7.0
 
 PLUGIN_NAME ||= "discourse-blank-pages".freeze
+
+Discourse::Application.config.autoload_paths += Dir["#{__dir__}/app/views/application"]
 
 after_initialize do
   module ::DiscourseBlankPages
@@ -16,24 +18,32 @@ after_initialize do
       isolate_namespace DiscourseBlankPages
     end
 
-    Engine.routes.draw do
-      get "/*page_id", to: ->(env) {
-        request = ActionDispatch::Request.new(env)
-        page_id = request.path_parameters[:page_id]
+    class ApplicationController < ::ActionController::Base
+      # Include modules needed to render application layout
+      include CanonicalURL::ControllerExtensions
+    end
 
+    class BlankPageController < ApplicationController
+      def show
+        page_id = params[:page_id]
+  
+        redirect_to_404 && return unless SiteSetting.valid_routes.present?
         valid_routes = SiteSetting.valid_routes.split('|')
-        unless valid_routes.include?(page_id)
-          response_headers = { 'Content-Type' => 'text/html', 'Location' => '/404' }
-          return [302, response_headers, '']
-        end
-
-        rendered_content = ApplicationController.render(inline: '', layout: 'layouts/application')
-
-        [200, {'Content-Type' => 'text/html'}, [rendered_content]]
-      }
+        redirect_to_404 && return unless valid_routes.include?(page_id)
+  
+        render 'layouts/application'
+      end
+  
+      def redirect_to_404
+        redirect_to '/404', status: 302
+      end
+    end
+  
+    Engine.routes.draw do
+      get "/*page_id", to: "blank_page#show"
     end
   end
-  
+
   Discourse::Application.routes.append do
     mount ::DiscourseBlankPages::Engine, at: '/pages'
   end

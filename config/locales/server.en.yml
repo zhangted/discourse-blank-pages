@@ -1,0 +1,4 @@
+en:
+  site_settings:
+    external_js_link: 'Load a js script on valid routes'
+    valid_routes: 'Define your valid routes (prefixed with "/page")'
