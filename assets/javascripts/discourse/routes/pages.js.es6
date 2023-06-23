@@ -9,8 +9,7 @@ function loadExternalJS({ external_js_link }) {
 
 export default DiscourseRoute.extend({
   model() {
-    const external_js_link = this.siteSettings.external_js_link;
-    loadExternalJS({ external_js_link });
+    loadExternalJS(this.siteSettings);
 
     const page_id = this.paramsFor('pages').page_id;
     console.log(page_id)
