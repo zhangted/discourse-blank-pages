@@ -28,7 +28,7 @@ after_initialize do
         page_id = params[:page_id]
   
         redirect_to_404 && return unless SiteSetting.valid_routes.present?
-        valid_routes = SiteSetting.valid_routes.split('|')
+        valid_routes = SiteSetting.valid_routes.split('|').to_set
         redirect_to_404 && return unless valid_routes.include?(page_id)
   
         render 'layouts/application'
